@@ -1,15 +1,12 @@
 #Ismael Coral Hoepers Heinzelmann
 .data
-	#A: .word 1, 2, 3, 0, 1, 4, 0, 0, 1 # matriz A
-	#B: .word 1, -2, 5, 0, 1, -4, 0, 0, 1 # matriz B
+	A: .word 1, 2, 3, 0, 1, 4, 0, 0, 1 # matriz A
+	B: .word 1, -2, 5, 0, 1, -4, 0, 0, 1 # matriz B
 	FOUT: .asciiz "output.txt"
 	BREAK_LINE: .asciiz "\n"
 	SPACE: .asciiz " "
 	BUFF: .space 16
 	MINUS: .asciiz  "-"
-
-	A: .word 2, 2, 1, -1, 4, 2, 5, 5, -5
-	B: .word -5, 1, 1, -1, -5, 2, -5, 0, 5
 .text
 	li $s0, 0 # i
 	li $s1, 0 # j
@@ -60,7 +57,6 @@ L1:	mul $t2, $s0, 12 # t2 = i * 12
 	bltz $t1, case_ltz
 	bgtz $t1, case_gtz
 	
-#PENSAR LÓGICA PARA INVERSÃO DE BUFFER COM MAIS BITS ARMAZENADOS
 	
 case_ltz:
 	li $v0, 15
@@ -90,16 +86,29 @@ case_zero:
 	li $a2, 1
 	syscall	
 	
-	
-	
 	# j++
 done:
 	addi $s1, $s1, 1
+	move $t0, $t7
+	move $t1, $t6
 	sub $t6, $t6, $t7
+	move $t2, $t6
+	# t0 = start ; t1 = end ; t2 = size
 	
-	# NOW YOU JUST NEED TO REVERSE THE BUFFER HERE
-	# CHECK IF SIZE IS EVEN OR ODD
-	# j end at the final of the inverse
+	addi $t1, $t1, -1 # Set $t1 to point to the last byte of the buffer
+
+reverse_loop:
+   	bge $t0, $t1, end
+    	lb $t3, ($t0) 
+    	lb $t4, ($t1)
+
+    	sb $t4, ($t0) 
+    	sb $t3, ($t1)
+
+    	addi $t0, $t0, 1
+    	addi $t1, $t1, -1
+
+    	j reverse_loop
 end:
 	
 	li $v0, 15
