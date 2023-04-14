@@ -5,7 +5,8 @@
 	FOUT: .asciiz "output.txt"
 	BREAK_LINE: .asciiz "\n"
 	SPACE: .asciiz " "
-	BUFF: .space 1
+	BUFF: .space 16
+	MINUS: .asciiz  "-"
 
 	A: .word 2, 2, 1, -1, 4, 2, 5, 5, -5
 	B: .word -5, 1, 1, -1, -5, 2, -5, 0, 5
@@ -53,6 +54,7 @@ L1:	mul $t2, $s0, 12 # t2 = i * 12
 	
 	# convert word to string
 	move $t1, $t4
+	la $t6, BUFF
 	la $t7, BUFF
 	beqz $t1, case_zero
 	bltz $t1, case_ltz
@@ -61,14 +63,11 @@ L1:	mul $t2, $s0, 12 # t2 = i * 12
 #PENSAR LÓGICA PARA INVERSÃO DE BUFFER COM MAIS BITS ARMAZENADOS
 	
 case_ltz:
-	li $t4, 45
-	sb $t4, ($t7)
 	li $v0, 15
 	move $a0, $s6
-	la $a1, BUFF
+	la $a1, MINUS
 	li $a2, 1
-	syscall
-	
+	syscall	
 	abs $t1, $t1
 case_gtz:
 	li $t0, 10
@@ -76,19 +75,14 @@ case_gtz:
 	mflo $t1
 	mfhi $t2
 	addi $t2, $t2, 48
-	sb $t2, ($t7)
-	
-	li $v0, 15
-	move $a0, $s6
-	la $a1, BUFF
-	li $a2, 1
-	syscall
+	sb $t2, ($t6)
+	addi $t6, $t6, 1
 	beqz $t1, done
 	j case_gtz
 	
 case_zero:
 	addi $t1, $t1, 48
-	sb $t1, ($t7)
+	sb $t1, ($t6)
 	
 	li $v0, 15
 	move $a0, $s6
@@ -96,8 +90,23 @@ case_zero:
 	li $a2, 1
 	syscall	
 	
+	
+	
 	# j++
-done:	addi $s1, $s1, 1
+done:
+	addi $s1, $s1, 1
+	sub $t6, $t6, $t7
+	
+	# NOW YOU JUST NEED TO REVERSE THE BUFFER HERE
+	# CHECK IF SIZE IS EVEN OR ODD
+	# j end at the final of the inverse
+end:
+	
+	li $v0, 15
+	move $a0, $s6
+	move $a1, $t7
+	move $a2, $t6
+	syscall
 	
 	li $v0, 15
 	move $a0, $s6
