@@ -1,7 +1,9 @@
 #Ismael Coral Hoepers Heinzelmann
 .data
-	A: .word 1, 2, 3, 0, 1, 4, 0, 0, 1 # matriz A
-	B: .word 1, -2, 5, 0, 1, -4, 0, 0, 1 # matriz B
+	#A: .word 1, 2, 3, 0, 1, 4, 0, 0, 1 # matriz A
+	#B: .word 1, -2, 5, 0, 1, -4, 0, 0, 1 # matriz B
+	A: .word 2, 2, 1, -1, 4, 2, 5, 5, -5
+	B: .word -5, 1, 1, -1, -5, 2, -5, 0, 5
 	AB: .word 0, 0, 0, 0, 0, 0, 0, 0 ,0 # matriz resultado A.B
 
 .text
